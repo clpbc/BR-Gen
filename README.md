@@ -6,13 +6,13 @@ This dataset contains150k localized generated images, forged by traditional inpa
 
 ### Visual Cases
 
-![cases](https://clpbc-pic.oss-cn-nanjing.aliyuncs.com/undefined202504162338488.png)
+![cases](.\figs\cases.png)
 
 
 
 ### Dataset specifications
 
-<img src="https://clpbc-pic.oss-cn-nanjing.aliyuncs.com/undefined202504162341383.png" alt="br-gen" style="zoom: 5%;" />
+![cases](.\figs\br-gen.png)
 
 How we created 150k localized generated images using various open-source models. We used 2 types of masks, and 5 types of inpainting methods to generated these images. Not seen in the diagram: each real image will correspond to 2 masks and 10 localized generated images.
 
