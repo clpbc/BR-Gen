@@ -1,1 +1,1 @@
-# BR-Gen
+# Zooming In on Fakes: A Novel Dataset for Localized AI-Generated Image Detection with Forgery Amplification Approach
