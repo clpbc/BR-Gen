@@ -41,6 +41,12 @@ The **BR-Gen** dataset can be downloaded through [Baidu Netdisk]() (Password: xx
 
 Considering copyright issues, the BR-Gen dataset only provides Region Masks and Forged Images. The original images were collected from datasets such as COCO, ImageNet, and Places. as detailed in **Section 3.1 Real Image Collection** of the paper.
 
+| Dataset        | Download URL                                                 |
+| -------------- | ------------------------------------------------------------ |
+| COCO2017_train | http://images.cocodataset.org/zips/train2017.zip             |
+| ImageNet       | https://image-net.org/data/ILSVRC/2012/ILSVRC2012_img_train.tar |
+| Places         | [Places2: A Large-Scale Database for Scene Understanding](http://places2.csail.mit.edu/download.html) |
+
 However, we have provided the file name of the real image used in the dataset. You can extract the real image data used in this dataset from the original real data according to "**RealImage/xxxxx/xxxxx_image_list.txt**" in the path.
 
 
