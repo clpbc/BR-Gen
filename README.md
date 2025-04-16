@@ -35,7 +35,7 @@ Note, in the process of training and testing, in order  to prevent the impact o 
 
 ### Download
 
-The **BR-Gen** dataset can be downloaded through [Baidu Netdisk]() (Password: xxxx). If you have any questions, please send an email to [lvpancai@stu.xmu.edu.cn](mailto:lvpancai@stu.xmu.edu.cn).
+The **BR-Gen** dataset can be downloaded through [Baidu Netdisk]() (Password: xxxx). If you have any questions, please send an email to [lvpancai@stu.xmu.edu.cn](mailto:lvpancai@stu.xmu.edu.cn). About stuff categories and thing categories, you can consult [COCO_stuff](https://github.com/nightrome/cocostuff) for more details.
 
 
 
