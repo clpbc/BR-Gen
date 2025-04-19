@@ -1,6 +1,6 @@
 # Zooming In on Fakes: A Novel Dataset for Localized AI-Generated Image Detection with Forgery Amplification Approach
 
-The Broader Region Generated (BR-Gen) dataset was proposed in the [ArXiv preprint]() paper "Zooming In on Fakes: A Novel Dataset for Localized AI-Generated Image Detection with Forgery Amplification Approach".
+The Broader Region Generated (BR-Gen) dataset was proposed in the [ArXiv preprint](https://arxiv.org/abs/2504.11922) paper "Zooming In on Fakes: A Novel Dataset for Localized AI-Generated Image Detection with Forgery Amplification Approach".
 
 ## Dataset(BR-Gen)
 
