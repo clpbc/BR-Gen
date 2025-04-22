@@ -61,6 +61,19 @@ To address the BR-Gen challenge and enhance performance of local AIGC detection,
 
 ![nfa_vit](figs/nfa_fit.png)
 
+## Citation
+If you find BR-Gen and NFA-ViT are useful for your research and applications, please cite using this BibTeX:
+
+```bib
+@article{cai2025zooming,
+  title={Zooming In on Fakes: A Novel Dataset for Localized AI-Generated Image Detection with Forgery Amplification Approach},
+  author={Cai, Lvpan and Wang, Haowei and Ji, Jiayi and ZhouMen, YanShu and Ma, Yiwei and Sun, Xiaoshuai and Cao, Liujuan and Ji, Rongrong},
+  journal={arXiv preprint arXiv:2504.11922},
+  year={2025}
+}
+```
+
+
 
 ## References & Acknowledgements
 We sincerely thank [IMDLBenCo](https://github.com/scu-zjz/IMDLBenCo) for their exploration and support.
