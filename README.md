@@ -61,6 +61,25 @@ To address the BR-Gen challenge and enhance performance of local AIGC detection,
 
 ![nfa_vit](figs/nfa_fit.png)
 
+For dataset and model utilization, we recommend using [IMDLBenCo](https://github.com/scu-zjz/IMDLBenCo), which offers many methods. And you can use this codebase to load the data and test model.
+
+### Installation
+```bash
+conda create -n nfa_vit python=3.9 -y
+conda activate nfa_vit
+pip install -r requirements.txt
+```
+
+### Train
+```bash
+train.sh
+```
+
+### Test
+```bash
+test.sh
+```
+
 ## Citation
 If you find BR-Gen and NFA-ViT are useful for your research and applications, please cite using this BibTeX:
 
