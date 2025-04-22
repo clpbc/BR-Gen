@@ -60,3 +60,9 @@ The BR-Gen dataset is released only for academic research. Researchers from educ
 To address the BR-Gen challenge and enhance performance of local AIGC detection, we introduce NFA-ViT, a noise-guided forgery amplification transformer that leverages a dual-branch architecture to diffuse forgery cues into real regions through modulated self-attention, significantly improving the detectability of small or spatially subtle forgeries.
 
 ![nfa_vit](figs/nfa_fit.png)
+
+
+## References & Acknowledgements
+We sincerely thank [IMDLBenCo](https://github.com/scu-zjz/IMDLBenCo) for their exploration and support.
+
+
