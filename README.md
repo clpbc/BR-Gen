@@ -55,3 +55,5 @@ However, we have provided the file name of the real image used in the dataset. Y
 
 The BR-Gen dataset is released only for academic research. Researchers from educational institutes are allowed to use this database freely for noncommercial purposes.
 
+## Noise-guided Foregery Amplification Vision Transformer(NFA-ViT)
+
