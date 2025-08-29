@@ -245,6 +245,7 @@ class Noise_Attention(Attention):
             mask = mask.view(bs, num_heads, num_q, num_k)
                         
             noise_guided_mask = mask.detach()   # TODO
+            # noise_guided_mask = mask
             
         
         attn = self.attn_drop(attn)
@@ -545,6 +546,7 @@ class MixVisionTransformer_b0(nn.Module):
     def forward(self, x):
         B = x.shape[0]
         noise_guided_masks = []
+        outs = []
 
         #----------------------------------#
         #   block1
@@ -556,6 +558,7 @@ class MixVisionTransformer_b0(nn.Module):
                 noise_guided_masks.append(noise_guided_mask)
         x = self.norm1(x)
         x = x.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()
+        outs.append(x)
 
         #----------------------------------#
         #   block2
@@ -567,7 +570,7 @@ class MixVisionTransformer_b0(nn.Module):
                 noise_guided_masks.append(noise_guided_mask)
         x = self.norm2(x)
         x = x.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()
-
+        outs.append(x)
         #----------------------------------#
         #   block3
         #----------------------------------#
@@ -578,7 +581,7 @@ class MixVisionTransformer_b0(nn.Module):
                 noise_guided_masks.append(noise_guided_mask)
         x = self.norm3(x)
         x = x.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()
-
+        outs.append(x)
         #----------------------------------#
         #   block4
         #----------------------------------#
@@ -589,5 +592,6 @@ class MixVisionTransformer_b0(nn.Module):
                 noise_guided_masks.append(noise_guided_mask)
         x = self.norm4(x)
         x = x.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()
+        outs.append(x)
 
-        return x, noise_guided_masks
+        return outs, noise_guided_masks

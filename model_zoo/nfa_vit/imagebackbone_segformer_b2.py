@@ -203,7 +203,7 @@ class Fix_Sparse_Attention(Attention):
         
         self.sparse_rate = sparse_rate
         
-    def Get_Attn_mask(self, num_q = 256, num_k= 16):
+    def Get_Attn_mask(self, num_q = 128, num_k= 16):
         q_row_indices = np.arange(int(math.sqrt(num_q))).reshape(-1, 1)
         q_col_indices = np.arange(int(math.sqrt(num_q))).reshape(1, -1)
         
@@ -259,7 +259,7 @@ class Fix_Sparse_Attention(Attention):
         
         # Apply mask by setting attention scores to a very low value where mask is 0
         # This ensures only positions where attn_mask is 1 contribute to attention
-        masked_attn = attn.masked_fill(attn_mask == 0, -1e9)
+        masked_attn = attn.masked_fill(attn_mask == 0, torch.finfo(attn.dtype).min)
         
         # Replace the original attention with the masked version
         attn = masked_attn
@@ -306,7 +306,7 @@ class Noise_Guided_Attention(Attention):
         
         # Apply mask by setting attention scores to a very low value where mask is 0
         # This ensures only positions where attn_mask is 1 contribute to attention
-        masked_attn = attn.masked_fill(attn_mask == 0, -1e9)
+        masked_attn = attn.masked_fill(attn_mask == 0, torch.finfo(attn.dtype).min)
         
         # Replace the original attention with the masked version
         attn = masked_attn
@@ -454,33 +454,51 @@ class Image_Block(Block):
         self.sparse_rate = sparse_rate
         self.is_last = is_last
         
+        # if not is_last:
+        #     self.attn = Fix_Sparse_Attention(
+        #         dim, num_heads=num_heads, qkv_bias=qkv_bias, qk_scale=qk_scale,
+        #         attn_drop=attn_drop, proj_drop=drop, sr_ratio=sr_ratio, sparse_rate = sparse_rate
+        #     )
+        # elif self.is_last:
+        #     self.attn = Noise_Guided_Attention(
+        #     dim, num_heads=num_heads, qkv_bias=qkv_bias, qk_scale=qk_scale,
+        #         attn_drop=attn_drop, proj_drop=drop, sr_ratio=sr_ratio
+        #     )
         if not is_last:
             self.attn = Fix_Sparse_Attention(
                 dim, num_heads=num_heads, qkv_bias=qkv_bias, qk_scale=qk_scale,
                 attn_drop=attn_drop, proj_drop=drop, sr_ratio=sr_ratio, sparse_rate = sparse_rate
             )
-        elif self.is_last:
+        else:
+            # self.attn = Attention(
+            #     dim, num_heads=num_heads, qkv_bias=qkv_bias, qk_scale=qk_scale,
+            #     attn_drop=attn_drop, proj_drop=drop, sr_ratio=sr_ratio
+            # )
             self.attn = Noise_Guided_Attention(
-            dim, num_heads=num_heads, qkv_bias=qkv_bias, qk_scale=qk_scale,
+                dim, num_heads=num_heads, qkv_bias=qkv_bias, qk_scale=qk_scale,
                 attn_drop=attn_drop, proj_drop=drop, sr_ratio=sr_ratio
             )
         
     def forward(self, x, H, W, noise_guided_mask = None):
+        # if not self.is_last:
+        #     x = x + self.drop_path(self.attn(self.norm1(x), H, W))
+        #     x = x + self.drop_path(self.mlp(self.norm2(x), H, W))
+            
+        # elif self.is_last:
+        #     x = self.attn(x, H, W, noise_guided_mask)
+        #     x = x + self.drop_path(self.norm1(x))
+        #     x = x + self.drop_path(self.mlp(self.norm2(x), H, W))
         if not self.is_last:
             x = x + self.drop_path(self.attn(self.norm1(x), H, W))
-            x = x + self.drop_path(self.mlp(self.norm2(x), H, W))
-            
-        elif self.is_last:
-            x = self.attn(x, H, W, noise_guided_mask)
-            x = x + self.drop_path(x)
-            x = x + self.drop_path(self.mlp(self.norm2(x), H, W))
-            
+        else:
+            x = x + self.drop_path(self.attn(self.norm1(x), H, W, noise_guided_mask))
+        x = x + self.drop_path(self.mlp(self.norm2(x), H, W))
         return x
 
 
 
 class MixVisionTransformer_b2(nn.Module):
-    def __init__(self, in_chans=3, num_classes=1000, embed_dims=[32, 64, 160, 256],
+    def __init__(self, in_chans=3, num_classes=1000, embed_dims=[64, 128, 320, 512],
                  num_heads=[1, 2, 5, 8], mlp_ratios=[4, 4, 4, 4], qkv_bias=True, qk_scale=None, drop_rate=0.,
                  attn_drop_rate=0., drop_path_rate=0.1, norm_layer=nn.LayerNorm,
                  depths=[3, 4, 6, 3], sr_ratios=[8, 4, 2, 1], sparse_rate = 2):
@@ -510,15 +528,13 @@ class MixVisionTransformer_b2(nn.Module):
         self.block1 = nn.ModuleList()
         for i in range(depths[0]):
             if i == depths[0] - 1:
-                self.block1.append(Image_Block(
-                    dim=embed_dims[0], num_heads=num_heads[0], mlp_ratio=mlp_ratios[0], qkv_bias=qkv_bias, qk_scale=qk_scale,
-                    drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[0], is_last = True
-                ))
+                is_last = True
             else:
-                self.block1.append(Image_Block(
-                    dim=embed_dims[0], num_heads=num_heads[0], mlp_ratio=mlp_ratios[0], qkv_bias=qkv_bias, qk_scale=qk_scale,
-                    drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[0], sparse_rate = sparse_rate
-                ))
+                is_last = False
+            self.block1.append(Image_Block(
+                dim=embed_dims[0], num_heads=num_heads[0], mlp_ratio=mlp_ratios[0], qkv_bias=qkv_bias, qk_scale=qk_scale,
+                drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[0], sparse_rate = sparse_rate, is_last = is_last
+            ))
         self.norm1 = norm_layer(embed_dims[0])
         
         #----------------------------------#
@@ -538,15 +554,13 @@ class MixVisionTransformer_b2(nn.Module):
         self.block2 = nn.ModuleList()
         for i in range(depths[1]):  
             if i == depths[1] - 1:
-                self.block2.append(Image_Block(
-                    dim=embed_dims[1], num_heads=num_heads[1], mlp_ratio=mlp_ratios[1], qkv_bias=qkv_bias, qk_scale=qk_scale,
-                    drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[1], is_last = True
-                ))
+                is_last = True
             else:
-                self.block2.append(Image_Block(
-                    dim=embed_dims[1], num_heads=num_heads[1], mlp_ratio=mlp_ratios[1], qkv_bias=qkv_bias, qk_scale=qk_scale,
-                    drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[1], sparse_rate = sparse_rate
-                ))
+                is_last = False
+            self.block2.append(Image_Block(
+                dim=embed_dims[1], num_heads=num_heads[1], mlp_ratio=mlp_ratios[1], qkv_bias=qkv_bias, qk_scale=qk_scale,
+                drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[1], sparse_rate = sparse_rate, is_last = is_last
+            ))
         self.norm2 = norm_layer(embed_dims[1])
 
         #----------------------------------#
@@ -566,15 +580,14 @@ class MixVisionTransformer_b2(nn.Module):
         self.block3 = nn.ModuleList()
         for i in range(depths[2]):
             if i == depths[2] - 1:
-                self.block3.append(Image_Block(
-                    dim=embed_dims[2], num_heads=num_heads[2], mlp_ratio=mlp_ratios[2], qkv_bias=qkv_bias, qk_scale=qk_scale,
-                    drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[2], is_last = True
-                ))
+                is_last = True
             else:
-                self.block3.append(Image_Block(
-                    dim=embed_dims[2], num_heads=num_heads[2], mlp_ratio=mlp_ratios[2], qkv_bias=qkv_bias, qk_scale=qk_scale,
-                    drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[2], sparse_rate = sparse_rate
-                ))
+                is_last = False
+            self.block3.append(Image_Block(
+                dim=embed_dims[2], num_heads=num_heads[2], mlp_ratio=mlp_ratios[2], qkv_bias=qkv_bias, qk_scale=qk_scale,
+                drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[2], sparse_rate = sparse_rate, is_last = is_last
+            ))
+
         self.norm3 = norm_layer(embed_dims[2])
 
         #----------------------------------#
@@ -594,15 +607,13 @@ class MixVisionTransformer_b2(nn.Module):
         self.block4 = nn.ModuleList()
         for i in range(depths[3]):  
             if i == depths[3] - 1:
-                self.block4.append(Image_Block(
-                    dim=embed_dims[3], num_heads=num_heads[3], mlp_ratio=mlp_ratios[3], qkv_bias=qkv_bias, qk_scale=qk_scale,
-                    drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[3], is_last = True
-                ))
+                is_last = True
             else:
-                self.block4.append(Image_Block(
-                    dim=embed_dims[3], num_heads=num_heads[3], mlp_ratio=mlp_ratios[3], qkv_bias=qkv_bias, qk_scale=qk_scale,
-                    drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[3], sparse_rate = sparse_rate
-                ))
+                is_last = False
+            self.block4.append(Image_Block(
+                dim=embed_dims[3], num_heads=num_heads[3], mlp_ratio=mlp_ratios[3], qkv_bias=qkv_bias, qk_scale=qk_scale,
+                drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer, sr_ratio=sr_ratios[3], sparse_rate = sparse_rate, is_last = is_last
+            ))
         self.norm4 = norm_layer(embed_dims[3])
 
         self.apply(self._init_weights)
@@ -624,19 +635,18 @@ class MixVisionTransformer_b2(nn.Module):
                 
     def forward(self, x, noise_guided_masks = None):
         B = x.shape[0]
-        features = []
+        outs = []
 
         #----------------------------------#
         #   block1
         #----------------------------------#
         x, H, W = self.patch_embed1.forward(x)
         for i, blk in enumerate(self.block1):
-            x = blk.forward(x, H, W, noise_guided_masks[0])
 
+            x = blk.forward(x, H, W, noise_guided_masks[0])
         x = self.norm1(x)
         x = x.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()
-        
-        features.append(x)
+        outs.append(x)
 
         #----------------------------------#
         #   block2
@@ -644,11 +654,9 @@ class MixVisionTransformer_b2(nn.Module):
         x, H, W = self.patch_embed2.forward(x)
         for i, blk in enumerate(self.block2):
             x = blk.forward(x, H, W, noise_guided_masks[1])
-
         x = self.norm2(x)
         x = x.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()
-        
-        features.append(x)
+        outs.append(x)
 
         #----------------------------------#
         #   block3
@@ -656,11 +664,9 @@ class MixVisionTransformer_b2(nn.Module):
         x, H, W = self.patch_embed3.forward(x)
         for i, blk in enumerate(self.block3):
             x = blk.forward(x, H, W, noise_guided_masks[2])
-
         x = self.norm3(x)
         x = x.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()
-        
-        features.append(x)  
+        outs.append(x)
 
         #----------------------------------#
         #   block4
@@ -668,10 +674,8 @@ class MixVisionTransformer_b2(nn.Module):
         x, H, W = self.patch_embed4.forward(x)
         for i, blk in enumerate(self.block4):
             x = blk.forward(x, H, W, noise_guided_masks[3])
-
         x = self.norm4(x)
         x = x.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()
-        
-        features.append(x)
+        outs.append(x)
 
-        return features
+        return outs

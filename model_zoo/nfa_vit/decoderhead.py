@@ -19,10 +19,10 @@ class Multiple(nn.Module):
         # self.drop_path = nn.Identity()
         self.norm = norm_layer(embed_dim)
         
-        self.conv_layer1 = nn.Conv2d(in_channels=32, out_channels=512, kernel_size=1, stride=1, padding=0)
-        self.conv_layer2 = nn.Conv2d(in_channels=64, out_channels=512, kernel_size=1, stride=1, padding=0)
-        self.conv_layer3 = nn.Conv2d(in_channels=160, out_channels=512, kernel_size=1, stride=1, padding=0)
-        self.conv_layer4 = nn.Conv2d(in_channels=256, out_channels=512, kernel_size=1, stride=1, padding=0)
+        self.conv_layer1 = nn.Conv2d(in_channels=64, out_channels=512, kernel_size=1, stride=1, padding=0)
+        self.conv_layer2 = nn.Conv2d(in_channels=128, out_channels=512, kernel_size=1, stride=1, padding=0)
+        self.conv_layer3 = nn.Conv2d(in_channels=320, out_channels=512, kernel_size=1, stride=1, padding=0)
+        self.conv_layer4 = nn.Conv2d(in_channels=512, out_channels=512, kernel_size=1, stride=1, padding=0)
         self.conv_last = nn.Conv2d(embed_dim, predict_channels, kernel_size= 1)
     def forward(self, x):
         c1, c2, c3, c4 = x
@@ -47,3 +47,32 @@ class Multiple(nn.Module):
         x = (self.norm(x.permute(0, 2, 3, 1))).permute(0, 3, 1, 2).contiguous()
         x = self.conv_last(x)
         return x
+    
+    
+    
+    
+class MLP(nn.Module):
+    """
+    Linear Embedding
+    """
+    def __init__(self, input_dim=2048, embed_dim=768):
+        super().__init__()
+        self.proj = nn.Linear(input_dim, embed_dim)
+
+    def forward(self, x):
+        x = x.flatten(2).transpose(1, 2)
+        x = self.proj(x)
+        return x
+    
+class ConvModule(nn.Module):
+    def __init__(self, c1, c2, k=1, s=1, p=0, g=1, act=True):
+        super(ConvModule, self).__init__()
+        self.conv   = nn.Conv2d(c1, c2, k, s, p, groups=g, bias=False)
+        self.bn     = nn.BatchNorm2d(c2, eps=0.001, momentum=0.03)
+        self.act    = nn.ReLU() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
+
+    def forward(self, x):
+        return self.act(self.bn(self.conv(x)))
+
+    def fuseforward(self, x):
+        return self.act(self.conv(x))
