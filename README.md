@@ -97,4 +97,3 @@ If you find BR-Gen and NFA-ViT are useful for your research and applications, pl
 ## References & Acknowledgements
 We sincerely thank [IMDLBenCo](https://github.com/scu-zjz/IMDLBenCo) for their exploration and support.
 
-
