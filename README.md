@@ -63,6 +63,8 @@ To address the BR-Gen challenge and enhance performance of local AIGC detection,
 
 For dataset and model utilization, we recommend using [IMDLBenCo](https://github.com/scu-zjz/IMDLBenCo), which offers many methods. And you can use this codebase to load the data and test model.
 
+For Pretrain Weight, Please refer to [NFA_ViT](https://github.com/clpbc/BR-Gen/tree/main/model_zoo/nfa_vit) README.md. 
+
 ### Installation
 ```bash
 conda create -n nfa_vit python=3.9 -y
