@@ -81,6 +81,7 @@ train.sh
 
 We have considered the following dataset settings:
 
+```markdown
 BRGen-Stuff-Val/
 │
 ├── Au/
@@ -94,7 +95,7 @@ BRGen-Stuff-Val/
 └── Gt/
     ├── MAT_Stuff_COCO_00000000520_mask.png
     └── PowerPaint_Stuff_ImageNet_n06359193_84719_mask.png
-
+```
 
 
 For the training and testing sets, we adopt a unified folder hierarchy and loading method, which makes the data loading process more uniform and seamlessly integrates with IMDLBenCo. We provide a corresponding small validation set file BRGen-Stuff-Val, with a download address of [BaiDu Netdisk](https://pan.baidu.com/s/180LOvt-xMkTwU5mTsCYCew) (Password: cclp), consisting of 3000 Tp/Gt images. We hope that this small Stuff validation set can provide assistance for generalization evaluation in Image Manipulation Detection and Localization Domain.
