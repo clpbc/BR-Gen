@@ -1,34 +1,31 @@
-base_dir="./nfa_vit_train"
+base_dir="./outputs/train_nfavit"
 mkdir -p ${base_dir}
 
-CUDA_VISIBLE_DEVICES=0,1,2,3 \
-torchrun  \
-    --standalone    \
-    --nnodes=1     \
+export CUDA_VISIBLE_DEVICES=0,1,2,3
+
+torchrun \
+    --standalone \
+    --nnodes=1 \
     --nproc_per_node=4 \
-train.py \
+./IMDLBenCo/IMDLBenCo/training_scripts/train.py \
     --model NFA_ViT \
     --world_size 1 \
-    --find_unused_parameters \
-    --if_not_amp\
-    --batch_size 64 \
-    --test_batch_size 64 \
-    --data_path  "clpbc/brgen_train"\
-    --epochs 30 \
-    --lr 5e-4 \
-    --image_size 512 \
+    --batch_size 16 \
+    --data_path ./datasets/BRGen_train.json \
+    --epochs 200 \
+    --lr 2e-4 \
+    --min_lr 0 \
+    --weight_decay 0.05 \
+    --np_pretrain_weights "./model_zoo/nfavit/noiseprint.pth" \
+    --seg_b0_pretrain_weights "./model_zoo/nfa_vit/segformer_b0_backbone_weights.pth" \
+    --seg_b2_pretrain_weights "./model_zoo/nfa_vit/segformer_b2_backbone_weights.pth" \
+    --test_data_path ./datasets/BRGen_test.json \
     --if_resizing \
-    --min_lr 5e-7 \
-    --sparse_ratio 0.25 \
-    --sparse_rate 2 \
-    --weight_decay 0.005 \
-    --test_data_path "clpbc/brgen_test" \
-    --warmup_epochs 2 \
+    --find_unused_parameters \
+    --warmup_epochs 4 \
     --output_dir ${base_dir}/ \
     --log_dir ${base_dir}/ \
-    --accum_iter 2 \
+    --accum_iter 1 \
     --seed 42 \
-    --test_period 5 \
+    --test_period 20 \
     --num_workers 12 \
-2> ${base_dir}/error.log 1>${base_dir}/logs.log
-
