@@ -31,7 +31,7 @@ How we created 150k localized generated images using various open-source models.
 | **# real images**                | 12,000   | 1,500   | 1,500      | 15,000  |
 | **# localized generated images** | 120,000  | 15,000  | 15,000     | 150,000 |
 
-Note, in the process of training and testing, in order  to prevent the impact o category imbalance, we sample the generated images to keep the number of real samples the same.
+Note, in the process of training and testing, in order  to prevent the impact o category imbalance, we random  sample the generated images to keep the number of real samples the same.
 
 
 
