@@ -37,7 +37,7 @@ Note, in the process of training and testing, in order  to prevent the impact o 
 
 ### Download
 
-The **BR-Gen** dataset can be downloaded through [Google Drive](https://drive.google.com/drive/folders/1lPILaotrTplG5P83cugBnKM1EwUJFA9d?usp=sharing) and [Baidu Netdisk](https://pan.baidu.com/s/1cXgXm4EefC1sCw8vwadB_w) (Password: cclp). About stuff categories and thing categories, you can consult [COCO_stuff](https://github.com/nightrome/cocostuff) for more details. If you have any questions, please send an email to [lvpancai@stu.xmu.edu.cn](mailto:lvpancai@stu.xmu.edu.cn). 
+The **BR-Gen** dataset can be downloaded through [Google Drive](https://drive.google.com/drive/folders/1lPILaotrTplG5P83cugBnKM1EwUJFA9d?usp=sharing) and [Baidu Netdisk](https://pan.baidu.com/s/1cXgXm4EefC1sCw8vwadB_w) (Password: cclp). About stuff categories and thing categories, you can consult [COCO_stuff](https://github.com/nightrome/cocostuff) for more details. If you have any questions, please send an email to [lvpancai@gmail.com](mailto:lvpancai@gmail.com). 
 
 
 
