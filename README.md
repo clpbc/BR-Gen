@@ -113,8 +113,8 @@ If you find BR-Gen and NFA-ViT are useful for your research and applications, pl
 @article{cai2025zooming,
   title={Zooming In on Fakes: A Novel Dataset for Localized AI-Generated Image Detection with Forgery Amplification Approach},
   author={Cai, Lvpan and Wang, Haowei and Ji, Jiayi and ZhouMen, YanShu and Ma, Yiwei and Sun, Xiaoshuai and Cao, Liujuan and Ji, Rongrong},
-  journal={arXiv preprint arXiv:2504.11922},
-  year={2025}
+  journal={Proceedings of the the AAAI Conference on Artificial Intelligence (AAAI)},
+  year={2026}
 }
 ```
 
