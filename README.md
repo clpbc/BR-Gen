@@ -41,7 +41,7 @@ The **BR-Gen** dataset can be downloaded through [Google Drive](https://drive.go
 
 
 
-Considering copyright issues, the BR-Gen dataset only provides Region Masks and Forged Images. The original images were collected from datasets such as COCO, ImageNet, and Places. as detailed in **Section 3.1 Real Image Collection** of the paper.
+Considering copyright issues, the BR-Gen dataset only provides Region Masks and Forged Images. The original images were collected from datasets such as COCO, ImageNet, and Places. as detailed in **Section 3.1 Real Image Collection** of the paper. (The full corresponding original data is available via community contributions. Please refer to Issue **[#10](https://github.com/clpbc/BR-Gen/issues/10)** for details.)
 
 | Dataset        | Download URL                                                 |
 | -------------- | ------------------------------------------------------------ |
