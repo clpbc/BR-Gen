@@ -51,6 +51,15 @@ Considering copyright issues, the BR-Gen dataset only provides Region Masks and 
 
 However, we have provided the file name of the real image used in the dataset. You can extract the real image data used in this dataset from the original real data according to "**RealImage/xxxxx/xxxxx_image_list.txt**" in the path.
 
+#### Dataset JSON Files
+We also provide official JSON files for dataset partitioning, covering the training set and multiple validation splits.
+- `train.json` contains **12,000 real images** and the corresponding downsampled forged images.
+- Validation JSON files provide detailed and complete divisions for each val split.
+
+Download link: [Dataset jsons](https://pan.baidu.com/s/1wQaeEw9cYWNBdgXXjNs8-g?pwd=cclp)
+
+
+
 
 
 ### License
